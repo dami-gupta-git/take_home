@@ -3,11 +3,10 @@ Tests for POST /api/search/{id}/update.
 """
 
 import uuid
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
 
 SEARCH_ID = str(uuid.uuid4())
 
@@ -24,21 +23,6 @@ async def client(app):
         yield c
 
 
-@pytest.fixture
-def db_mock_update():
-    """Patches AsyncSessionLocal for the update endpoint with a Search row mock."""
-    session = AsyncMock(spec=AsyncSession)
-    session.add = MagicMock()
-    session.commit = AsyncMock()
-
-    factory = MagicMock()
-    factory.return_value.__aenter__ = AsyncMock(return_value=session)
-    factory.return_value.__aexit__ = AsyncMock(return_value=False)
-
-    with patch("app.routers.search.AsyncSessionLocal", factory):
-        yield factory, session
-
-
 def _make_search_mock(status: str = "in_progress") -> MagicMock:
     search = MagicMock()
     search.status.value = status
@@ -46,11 +30,11 @@ def _make_search_mock(status: str = "in_progress") -> MagicMock:
 
 
 @pytest.mark.anyio
-async def test_update_search_returns_ok(client, db_mock_update):
-    _, session = db_mock_update
+async def test_update_search_returns_ok(client, db_mock):
+    _, session = db_mock
     session.execute = AsyncMock(
         side_effect=[
-            MagicMock(scalar_one_or_none=MagicMock(return_value=_make_search_mock())),  # select Search
+            MagicMock(scalar_one_or_none=MagicMock(return_value=_make_search_mock())),
             MagicMock(scalar_one_or_none=MagicMock(return_value=None)),  # max batch_index
             MagicMock(),  # insert route
             MagicMock(),  # update Search
@@ -67,8 +51,8 @@ async def test_update_search_returns_ok(client, db_mock_update):
 
 
 @pytest.mark.anyio
-async def test_update_search_unknown_id_returns_404(client, db_mock_update):
-    _, session = db_mock_update
+async def test_update_search_unknown_id_returns_404(client, db_mock):
+    _, session = db_mock
     session.execute = AsyncMock(
         return_value=MagicMock(scalar_one_or_none=MagicMock(return_value=None))
     )
@@ -82,8 +66,8 @@ async def test_update_search_unknown_id_returns_404(client, db_mock_update):
 
 
 @pytest.mark.anyio
-async def test_update_search_commits_to_db(client, db_mock_update):
-    _, session = db_mock_update
+async def test_update_search_commits_to_db(client, db_mock):
+    _, session = db_mock
     session.execute = AsyncMock(
         side_effect=[
             MagicMock(scalar_one_or_none=MagicMock(return_value=_make_search_mock())),
@@ -102,9 +86,9 @@ async def test_update_search_commits_to_db(client, db_mock_update):
 
 
 @pytest.mark.anyio
-async def test_update_search_is_complete_sets_status(client, db_mock_update):
+async def test_update_search_is_complete_sets_status(client, db_mock):
     """is_complete=True with no routes should still commit and return ok."""
-    _, session = db_mock_update
+    _, session = db_mock
     session.execute = AsyncMock(
         side_effect=[
             MagicMock(scalar_one_or_none=MagicMock(return_value=_make_search_mock())),
@@ -122,9 +106,9 @@ async def test_update_search_is_complete_sets_status(client, db_mock_update):
 
 
 @pytest.mark.anyio
-async def test_update_search_error_message(client, db_mock_update):
+async def test_update_search_error_message(client, db_mock):
     """error_message triggers a failed status update."""
-    _, session = db_mock_update
+    _, session = db_mock
     session.execute = AsyncMock(
         side_effect=[
             MagicMock(scalar_one_or_none=MagicMock(return_value=_make_search_mock())),

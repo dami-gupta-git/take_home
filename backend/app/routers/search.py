@@ -1,5 +1,6 @@
 """
-Search router — POST /api/search, POST /api/search/{id}/update.
+Search router — POST /api/search, POST /api/search/{id}/update,
+GET /api/search/{id}/status, GET /api/search/{id}/results.
 """
 
 import asyncio
@@ -17,8 +18,20 @@ import app.http_client as http
 from app.config import get_settings
 from app.database import AsyncSessionLocal
 from app.models.db import Route, Search
-from models import SearchCreateRequest, SearchCreateResponse, SearchUpdate, UpdateResponse
-from retrosynthesis_search import RouteData, create_search_request, update_search_progress
+from models import (
+    SearchCreateRequest,
+    SearchCreateResponse,
+    SearchResultsResponse,
+    SearchStatusResponse,
+    SearchUpdate,
+    UpdateResponse,
+)
+from retrosynthesis_search import (
+    RouteData,
+    build_retrosynthesis_tree,
+    create_search_request,
+    update_search_progress,
+)
 
 router = APIRouter(prefix="/api")
 
@@ -69,18 +82,19 @@ async def update_search(
     Receive a batch of routes from the microservice.
     Inserts routes idempotently and updates the search status.
     """
-    result = await session.execute(select(Search).where(Search.id == uuid.UUID(search_id)))
+    sid = uuid.UUID(search_id)
+    result = await session.execute(select(Search).where(Search.id == sid))
     search = result.scalar_one_or_none()
     if search is None:
         raise HTTPException(status_code=404, detail="Search not found")
 
     if body.routes:
-        batch_index = await _next_batch_index(session, uuid.UUID(search_id))
+        batch_index = await _next_batch_index(session, sid)
         for route_index, route in enumerate(body.routes):
             stmt = (
                 insert(Route)
                 .values(
-                    search_id=uuid.UUID(search_id),
+                    search_id=sid,
                     batch_index=batch_index,
                     route_index=route_index,
                     score=route.score,
@@ -97,12 +111,60 @@ async def update_search(
         is_complete=body.is_complete,
         error_message=body.error_message,
     )
-    await session.execute(
-        update(Search).where(Search.id == uuid.UUID(search_id)).values(**update_data)
-    )
+    await session.execute(update(Search).where(Search.id == sid).values(**update_data))
     await session.commit()
 
     return UpdateResponse(status="ok")
+
+
+@router.get("/search/{search_id}/status", response_model=SearchStatusResponse)
+async def get_search_status(
+    search_id: str,
+    session: AsyncSession = Depends(get_db),
+) -> SearchStatusResponse:
+    sid = uuid.UUID(search_id)
+    result = await session.execute(select(Search).where(Search.id == sid))
+    search = result.scalar_one_or_none()
+    if search is None:
+        raise HTTPException(status_code=404, detail="Search not found")
+    return SearchStatusResponse(
+        id=str(search.id),
+        smiles=search.smiles,
+        status=search.status,
+        created_at=search.created_at.isoformat(),
+        updated_at=search.updated_at.isoformat(),
+        error_message=search.error_message,
+    )
+
+
+@router.get("/search/{search_id}/results", response_model=SearchResultsResponse)
+async def get_search_results(
+    search_id: str,
+    min_score: float | None = None,
+    session: AsyncSession = Depends(get_db),
+) -> SearchResultsResponse:
+    sid = uuid.UUID(search_id)
+    result = await session.execute(select(Search).where(Search.id == sid))
+    if result.scalar_one_or_none() is None:
+        raise HTTPException(status_code=404, detail="Search not found")
+
+    stmt = select(Route).where(Route.search_id == sid).order_by(Route.score.desc())
+    if min_score is not None:
+        stmt = stmt.where(Route.score >= min_score)
+
+    routes_result = await session.execute(stmt)
+    trees = [
+        build_retrosynthesis_tree(
+            cast(RouteData, {"score": r.score, "molecules": r.molecules, "reactions": r.reactions})
+        )
+        for r in routes_result.scalars().all()
+    ]
+
+    return SearchResultsResponse(
+        search_id=search_id,
+        total_routes=len(trees),
+        routes=trees,
+    )
 
 
 async def _next_batch_index(session: AsyncSession, search_id: uuid.UUID) -> int:

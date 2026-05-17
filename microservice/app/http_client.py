@@ -9,14 +9,11 @@ import structlog
 client: httpx.AsyncClient | None = None
 
 
-class _RequestIDTransport(httpx.AsyncHTTPTransport):
-    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
-        ctx = structlog.contextvars.get_contextvars()
-        request_id = ctx.get("request_id")
-        if request_id:
-            request.headers["X-Request-ID"] = str(request_id)
-        return await super().handle_async_request(request)
+def _inject_request_id(request: httpx.Request) -> None:
+    request_id = structlog.contextvars.get_contextvars().get("request_id")
+    if request_id:
+        request.headers["X-Request-ID"] = str(request_id)
 
 
 def make_client() -> httpx.AsyncClient:
-    return httpx.AsyncClient(transport=_RequestIDTransport(), timeout=10.0)
+    return httpx.AsyncClient(event_hooks={"request": [_inject_request_id]}, timeout=10.0)
