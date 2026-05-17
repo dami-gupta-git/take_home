@@ -21,6 +21,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     configure_logging(get_settings().LOG_LEVEL)
     db.AsyncSessionLocal = db.make_session_factory()
     http.client = http.make_client()
+    if http.client is None:
+        raise RuntimeError("Failed to initialise HTTP client")
     yield
     await http.client.aclose()
 

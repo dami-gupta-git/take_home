@@ -1,0 +1,42 @@
+[
+    {
+        "score": 0.95,
+        "molecules": [
+            {"smiles": "CCO", "catalog_entries": [{"vendor_id": "T-001", "catalog_name": "test_catalog", "lead_time_weeks": 1.0}]},
+            {"smiles": "CC", "catalog_entries": [{"vendor_id": "T-002", "catalog_name": "test_catalog", "lead_time_weeks": 2.0}]}
+        ],
+        "reactions": [{"name": "Esterification", "target": "CCO", "sources": ["CC", "O"]}]
+    },
+    {
+        "score": 0.85,
+        "molecules": [
+            {"smiles": "CCC", "catalog_entries": [{"vendor_id": "T-003", "catalog_name": "test_catalog", "lead_time_weeks": 1.0}]},
+            {"smiles": "CC", "catalog_entries": [{"vendor_id": "T-002", "catalog_name": "test_catalog", "lead_time_weeks": 2.0}]}
+        ],
+        "reactions": [{"name": "Coupling", "target": "CCC", "sources": ["CC", "C"]}]
+    },
+    {
+        "score": 0.75,
+        "molecules": [
+            {"smiles": "CCCO", "catalog_entries": [{"vendor_id": "T-004", "catalog_name": "test_catalog", "lead_time_weeks": 3.0}]},
+            {"smiles": "CCC", "catalog_entries": [{"vendor_id": "T-003", "catalog_name": "test_catalog", "lead_time_weeks": 1.0}]}
+        ],
+        "reactions": [{"name": "Oxidation", "target": "CCCO", "sources": ["CCC", "O"]}]
+    },
+    {
+        "score": 0.65,
+        "molecules": [
+            {"smiles": "CCCN", "catalog_entries": [{"vendor_id": "T-005", "catalog_name": "test_catalog", "lead_time_weeks": 4.0}]},
+            {"smiles": "CCC", "catalog_entries": [{"vendor_id": "T-003", "catalog_name": "test_catalog", "lead_time_weeks": 1.0}]}
+        ],
+        "reactions": [{"name": "Amination", "target": "CCCN", "sources": ["CCC", "N"]}]
+    },
+    {
+        "score": 0.55,
+        "molecules": [
+            {"smiles": "CCCC", "catalog_entries": [{"vendor_id": "T-006", "catalog_name": "test_catalog", "lead_time_weeks": 5.0}]},
+            {"smiles": "CCC", "catalog_entries": [{"vendor_id": "T-003", "catalog_name": "test_catalog", "lead_time_weeks": 1.0}]}
+        ],
+        "reactions": [{"name": "Coupling", "target": "CCCC", "sources": ["CCC", "C"]}]
+    }
+]

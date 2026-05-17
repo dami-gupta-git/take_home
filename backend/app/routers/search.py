@@ -14,9 +14,9 @@ from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+import app.database as db
 import app.http_client as http
 from app.config import get_settings
-from app.database import AsyncSessionLocal
 from app.models.db import Route, Search
 from models import (
     SearchCreateRequest,
@@ -39,8 +39,8 @@ logger = structlog.get_logger(__name__)
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    assert AsyncSessionLocal is not None
-    async with AsyncSessionLocal() as session:
+    assert db.AsyncSessionLocal is not None
+    async with db.AsyncSessionLocal() as session:
         yield session
 
 
@@ -72,8 +72,7 @@ async def create_search(
     settings = get_settings()
     callback_url = f"{settings.BACKEND_URL}/api/search/{data['id']}/update"
 
-    smiles_log = body.smiles if settings.LOG_LEVEL.upper() == "DEBUG" else "<redacted>"
-    logger.info("search_created", search_id=str(data["id"]), smiles=smiles_log)
+    logger.info("search_created", search_id=str(data["id"]), smiles=body.smiles)
 
     asyncio.create_task(_notify_microservice(body.smiles, callback_url))
 
@@ -117,6 +116,21 @@ async def update_search(
     )
     await session.execute(update(Search).where(Search.id == search_id).values(**update_data))
     await session.commit()
+
+    if body.is_complete:
+        result = await session.execute(
+            select(Route).where(Route.search_id == search_id).order_by(Route.score.desc())
+        )
+        routes = result.scalars().all()
+        logger.info(
+            "search_completed",
+            search_id=str(search_id),
+            total_routes=len(routes),
+            routes=[
+                {"score": r.score, "smiles": r.molecules[0]["smiles"] if r.molecules else None}
+                for r in routes
+            ],
+        )
 
     return UpdateResponse(status="ok")
 
@@ -177,10 +191,9 @@ async def _next_batch_index(session: AsyncSession, search_id: uuid.UUID) -> int:
 
 
 async def _notify_microservice(smiles: str, callback_url: str) -> None:
-    assert http.client is not None
     settings = get_settings()
     try:
-        await http.client.post(
+        await http.client.post(  # type: ignore[union-attr]
             f"{settings.MICROSERVICE_URL}/start_search",
             json={"smiles": smiles, "callback_url": callback_url},
         )

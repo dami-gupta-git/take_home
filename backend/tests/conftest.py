@@ -32,5 +32,5 @@ def db_mock():
     factory = MagicMock()
     factory.return_value.__aenter__ = AsyncMock(return_value=session)
     factory.return_value.__aexit__ = AsyncMock(return_value=False)
-    with patch("app.routers.search.AsyncSessionLocal", factory):
+    with patch("app.database.AsyncSessionLocal", factory):
         yield factory, session

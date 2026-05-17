@@ -19,6 +19,8 @@ from app.routers import _tasks, router
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     configure_logging(get_settings().LOG_LEVEL)
     http.client = http.make_client()
+    if http.client is None:
+        raise RuntimeError("Failed to initialise HTTP client")
     yield
     # Cancel and await all running background tasks on shutdown
     for task in list(_tasks):

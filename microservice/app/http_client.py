@@ -9,7 +9,7 @@ import structlog
 client: httpx.AsyncClient | None = None
 
 
-def _inject_request_id(request: httpx.Request) -> None:
+async def _inject_request_id(request: httpx.Request) -> None:
     request_id = structlog.contextvars.get_contextvars().get("request_id")
     if request_id:
         request.headers["X-Request-ID"] = str(request_id)

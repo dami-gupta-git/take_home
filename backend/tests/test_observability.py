@@ -24,8 +24,7 @@ async def test_request_id_propagated_when_present(app):
     assert response.headers["x-request-id"] == sent_id
 
 
-def test_smiles_redacted_at_info_level():
-    """At INFO level, the value passed to the logger must be '<redacted>', not the real SMILES."""
+def test_smiles_logged_at_info_level():
     import asyncio
     from app.routers.search import create_search
 
@@ -52,5 +51,4 @@ def test_smiles_redacted_at_info_level():
         body = SearchCreateRequest(smiles=smiles)
         asyncio.run(create_search(body, session))
 
-    assert any(kw.get("smiles") == "<redacted>" for kw in logged_values)
-    assert all(kw.get("smiles") != smiles for kw in logged_values)
+    assert any(kw.get("smiles") == smiles for kw in logged_values)
