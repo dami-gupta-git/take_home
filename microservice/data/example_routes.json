@@ -1,0 +1,372 @@
+[
+    {
+        "score": 0.9995,
+        "molecules": [
+            {
+                "smiles": "O=C(Cn1nnc2ccccc21)N(Cc1ccsc1)c1ccc(Cl)cc1",
+                "catalog_entries": []
+            },
+            {
+                "smiles": "Clc1ccc(NCc2ccsc2)cc1",
+                "catalog_entries": [
+                    {
+                        "vendor_id": "3162059",
+                        "catalog_name": "pubchem",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "BBV-131088",
+                        "catalog_name": "enamine_made",
+                        "lead_time_weeks": 6.0
+                    },
+                    {
+                        "vendor_id": "1536185",
+                        "catalog_name": "emolecules",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "EN300-161145",
+                        "catalog_name": "enamine_bb",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "s_38____56070____13230996",
+                        "catalog_name": "enamine_real",
+                        "lead_time_weeks": 4.0
+                    },
+                    {
+                        "vendor_id": "MolPort-046-846-280",
+                        "catalog_name": "molport",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "MCULE-3563800686",
+                        "catalog_name": "mcule",
+                        "lead_time_weeks": 0.0
+                    }
+                ]
+            },
+            {
+                "smiles": "O=C(O)Cn1nnc2ccccc21",
+                "catalog_entries": [
+                    {
+                        "vendor_id": "MCULE-6198639583",
+                        "catalog_name": "mcule",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "s_270034____11622716____7554828",
+                        "catalog_name": "enamine_real",
+                        "lead_time_weeks": 4.0
+                    },
+                    {
+                        "vendor_id": "653350",
+                        "catalog_name": "emolecules",
+                        "lead_time_weeks": 0.7
+                    },
+                    {
+                        "vendor_id": "BBV-2156413",
+                        "catalog_name": "enamine_made",
+                        "lead_time_weeks": 6.0
+                    },
+                    {
+                        "vendor_id": "EN300-24347",
+                        "catalog_name": "enamine_bb",
+                        "lead_time_weeks": 0.7
+                    },
+                    {
+                        "vendor_id": "MolPort-002-471-199",
+                        "catalog_name": "molport",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "SCHEMBL361654",
+                        "catalog_name": "surechembl",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "WXCD01003197",
+                        "catalog_name": "wuxi_bb_screening",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "154446254",
+                        "catalog_name": "pubchem",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "",
+                        "catalog_name": "generic",
+                        "lead_time_weeks": 2.0
+                    }
+                ]
+            }
+        ],
+        "reactions": [
+            {
+                "name": "Amidation",
+                "target": "O=C(Cn1nnc2ccccc21)N(Cc1ccsc1)c1ccc(Cl)cc1",
+                "sources": [
+                    "Clc1ccc(NCc2ccsc2)cc1",
+                    "O=C(O)Cn1nnc2ccccc21"
+                ]
+            }
+        ]
+    },
+    {
+        "score": 0.8201,
+        "molecules": [
+            {
+                "smiles": "O=C(Cn1nnc2ccccc21)N(Cc1ccsc1)c1ccc(Cl)cc1",
+                "catalog_entries": []
+            },
+            {
+                "smiles": "CCOC(=O)Cn1nnc2ccccc21",
+                "catalog_entries": [
+                    {
+                        "vendor_id": "BBV-2156488",
+                        "catalog_name": "enamine_made",
+                        "lead_time_weeks": 6.0
+                    },
+                    {
+                        "vendor_id": "s_7____128806____5825034",
+                        "catalog_name": "enamine_real",
+                        "lead_time_weeks": 4.0
+                    },
+                    {
+                        "vendor_id": "MolPort-002-143-260",
+                        "catalog_name": "molport",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "620404",
+                        "catalog_name": "emolecules",
+                        "lead_time_weeks": 0.7
+                    },
+                    {
+                        "vendor_id": "MCULE-6124919644",
+                        "catalog_name": "mcule",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "SCHEMBL2490943",
+                        "catalog_name": "surechembl",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "684169",
+                        "catalog_name": "pubchem",
+                        "lead_time_weeks": 12.0
+                    }
+                ]
+            },
+            {
+                "smiles": "Clc1ccc(NCc2ccsc2)cc1",
+                "catalog_entries": [
+                    {
+                        "vendor_id": "3162059",
+                        "catalog_name": "pubchem",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "BBV-131088",
+                        "catalog_name": "enamine_made",
+                        "lead_time_weeks": 6.0
+                    },
+                    {
+                        "vendor_id": "1536185",
+                        "catalog_name": "emolecules",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "EN300-161145",
+                        "catalog_name": "enamine_bb",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "s_38____56070____13230996",
+                        "catalog_name": "enamine_real",
+                        "lead_time_weeks": 4.0
+                    },
+                    {
+                        "vendor_id": "MolPort-046-846-280",
+                        "catalog_name": "molport",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "MCULE-3563800686",
+                        "catalog_name": "mcule",
+                        "lead_time_weeks": 0.0
+                    }
+                ]
+            }
+        ],
+        "reactions": [
+            {
+                "name": "Ester amidation",
+                "target": "O=C(Cn1nnc2ccccc21)N(Cc1ccsc1)c1ccc(Cl)cc1",
+                "sources": [
+                    "CCOC(=O)Cn1nnc2ccccc21",
+                    "Clc1ccc(NCc2ccsc2)cc1"
+                ]
+            }
+        ]
+    },
+    {
+        "score": 0.0191,
+        "molecules": [
+            {
+                "smiles": "O=C(Cn1nnc2ccccc21)N(Cc1ccsc1)c1ccc(Cl)cc1",
+                "catalog_entries": []
+            },
+            {
+                "smiles": "Clc1ccc(I)cc1",
+                "catalog_entries": [
+                    {
+                        "vendor_id": "MolPort-000-153-151",
+                        "catalog_name": "molport",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "477526",
+                        "catalog_name": "emolecules",
+                        "lead_time_weeks": 0.7
+                    },
+                    {
+                        "vendor_id": "SCHEMBL208292",
+                        "catalog_name": "surechembl",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "12510",
+                        "catalog_name": "pubchem",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "EN300-77395",
+                        "catalog_name": "enamine_bb",
+                        "lead_time_weeks": 0.7
+                    },
+                    {
+                        "vendor_id": "",
+                        "catalog_name": "generic",
+                        "lead_time_weeks": 2.0
+                    },
+                    {
+                        "vendor_id": "MCULE-3776065149",
+                        "catalog_name": "mcule",
+                        "lead_time_weeks": 0.0
+                    }
+                ]
+            },
+            {
+                "smiles": "O=C(Cn1nnc2ccccc21)NCc1ccsc1",
+                "catalog_entries": [
+                    {
+                        "vendor_id": "122211285",
+                        "catalog_name": "pubchem",
+                        "lead_time_weeks": 12.0
+                    }
+                ]
+            },
+            {
+                "smiles": "NCc1ccsc1",
+                "catalog_entries": [
+                    {
+                        "vendor_id": "SCHEMBL120232",
+                        "catalog_name": "surechembl",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "WXCD01006275",
+                        "catalog_name": "wuxi_bb_screening",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "MolPort-000-140-225",
+                        "catalog_name": "molport",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "",
+                        "catalog_name": "generic",
+                        "lead_time_weeks": 2.0
+                    },
+                    {
+                        "vendor_id": "MCULE-1358443205",
+                        "catalog_name": "mcule",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "720302",
+                        "catalog_name": "emolecules",
+                        "lead_time_weeks": 0.7
+                    },
+                    {
+                        "vendor_id": "4328338",
+                        "catalog_name": "pubchem",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "EN300-110525",
+                        "catalog_name": "enamine_bb",
+                        "lead_time_weeks": 1.4
+                    }
+                ]
+            },
+            {
+                "smiles": "COC(=O)Cn1nnc2ccccc21",
+                "catalog_entries": [
+                    {
+                        "vendor_id": "MolPort-002-492-362",
+                        "catalog_name": "molport",
+                        "lead_time_weeks": 0.0
+                    },
+                    {
+                        "vendor_id": "4340565",
+                        "catalog_name": "emolecules",
+                        "lead_time_weeks": 0.7
+                    },
+                    {
+                        "vendor_id": "MCULE-7236067687",
+                        "catalog_name": "mcule",
+                        "lead_time_weeks": 5.0
+                    },
+                    {
+                        "vendor_id": "313449",
+                        "catalog_name": "pubchem",
+                        "lead_time_weeks": 12.0
+                    },
+                    {
+                        "vendor_id": "BBV-2156454",
+                        "catalog_name": "enamine_made",
+                        "lead_time_weeks": 6.0
+                    },
+                    {
+                        "vendor_id": "s_7____128806____5534970",
+                        "catalog_name": "enamine_real",
+                        "lead_time_weeks": 4.0
+                    }
+                ]
+            }
+        ],
+        "reactions": [
+            {
+                "name": "Ester amidation",
+                "target": "O=C(Cn1nnc2ccccc21)NCc1ccsc1",
+                "sources": [
+                    "NCc1ccsc1",
+                    "COC(=O)Cn1nnc2ccccc21"
+                ]
+            },
+            {
+                "name": "Buchwald-Hartwig amination with amide",
+                "target": "O=C(Cn1nnc2ccccc21)N(Cc1ccsc1)c1ccc(Cl)cc1",
+                "sources": [
+                    "Clc1ccc(I)cc1",
+                    "O=C(Cn1nnc2ccccc21)NCc1ccsc1"
+                ]
+            }
+        ]
+    }
+]
