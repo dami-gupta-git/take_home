@@ -21,7 +21,7 @@ jobs:
     - name: Install backend dependencies
       run: |
         cd backend
-        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
     
     - name: Run backend tests
       run: |
@@ -42,7 +42,7 @@ jobs:
     - name: Install microservice dependencies
       run: |
         cd microservice
-        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
     
     - name: Run microservice tests
       run: |
