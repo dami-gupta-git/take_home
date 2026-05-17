@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: retro
+      POSTGRES_PASSWORD: retro
+      POSTGRES_DB: retro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retro"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://retro:retro@postgres:5432/retro
+      MICROSERVICE_URL: http://microservice:8001
+      LOG_LEVEL: INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  microservice:
+    build: ./microservice
+    ports:
+      - "8001:8001"
+    environment:
+      LOG_LEVEL: INFO
+      BATCH_SIZE: 1
+      BATCH_DELAY_SECONDS: 0.5
