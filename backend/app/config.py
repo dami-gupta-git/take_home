@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     # Required — no defaults; service will fail fast on startup if missing
     DATABASE_URL: str
     MICROSERVICE_URL: str
+    BACKEND_URL: str = "http://backend:8000"
 
     LOG_LEVEL: str = "INFO"
 

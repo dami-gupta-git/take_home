@@ -4,13 +4,6 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 
-@pytest.fixture
-def app():
-    from app.main import app
-
-    return app
-
-
 @pytest.mark.anyio
 async def test_healthz(app):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:

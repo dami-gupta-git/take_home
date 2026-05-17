@@ -9,15 +9,20 @@ from fastapi import FastAPI, Response
 from sqlalchemy import text
 
 import app.database as db
+import app.http_client as http
+from app.routers.search import router as search_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     db.AsyncSessionLocal = db.make_session_factory()
+    http.client = http.make_client()
     yield
+    await http.client.aclose()
 
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(search_router)
 
 
 @app.get("/healthz")
