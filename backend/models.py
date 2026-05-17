@@ -55,7 +55,7 @@ class Route(BaseModel):
 
 
 class SearchUpdate(BaseModel):
-    routes: list[Route]
+    routes: list[Route] = []
     is_complete: bool = False
     error_message: str | None = None
 

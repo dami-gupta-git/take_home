@@ -5,6 +5,7 @@ Backend API entry point. Exposes liveness and readiness probes; routers added in
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
+import structlog
 from fastapi import FastAPI, Response
 from sqlalchemy import text
 
@@ -14,6 +15,8 @@ from app.config import get_settings
 from app.logging import configure_logging
 from app.middleware import RequestIDMiddleware
 from app.routers.search import router as search_router
+
+logger = structlog.get_logger(__name__)
 
 
 @asynccontextmanager
@@ -45,6 +48,7 @@ async def readyz() -> Response | dict[str, str]:
             await session.execute(text("SELECT 1"))
         return {"status": "ok"}
     except Exception:
+        logger.exception("readyz_failed")
         return Response(
             content='{"status": "unavailable"}',
             status_code=503,

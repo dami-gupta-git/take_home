@@ -51,6 +51,10 @@ async def run_search(smiles: str, callback_url: str) -> None:
 
     except Exception:
         logger.exception("search_failed", smiles=smiles)
-        await http.client.post(  # type: ignore[union-attr]
-            callback_url, json={"routes": [], "is_complete": True, "error_message": "Search failed"}
-        )
+        try:
+            await http.client.post(  # type: ignore[union-attr]
+                callback_url,
+                json={"routes": [], "is_complete": True, "error_message": "Search failed"},
+            )
+        except Exception:
+            logger.exception("error_callback_failed", smiles=smiles)

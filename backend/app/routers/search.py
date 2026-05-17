@@ -193,9 +193,10 @@ async def _next_batch_index(session: AsyncSession, search_id: uuid.UUID) -> int:
 async def _notify_microservice(smiles: str, callback_url: str) -> None:
     settings = get_settings()
     try:
-        await http.client.post(  # type: ignore[union-attr]
+        response = await http.client.post(  # type: ignore[union-attr]
             f"{settings.MICROSERVICE_URL}/start_search",
             json={"smiles": smiles, "callback_url": callback_url},
         )
+        response.raise_for_status()
     except Exception:
         logger.exception("microservice_notify_failed")
