@@ -5,10 +5,10 @@ install:
 	cd backend && pip install -r requirements-dev.txt
 	cd microservice && pip install -r requirements-dev.txt
 
-# Format and lint both services
+# Check formatting and lint both services (no changes made)
 lint:
-	cd backend && ruff format . && ruff check .
-	cd microservice && ruff format . && ruff check .
+	cd backend && ruff format --check . && ruff check .
+	cd microservice && ruff format --check . && ruff check .
 
 # Format, lint, and auto-fix both services
 lint-fix:

@@ -12,6 +12,10 @@ strict = true
 ignore_missing_imports = true
 exclude = ["get_routes\\.py", "models\\.py", "tests/"]
 
+[[tool.mypy.overrides]]
+module = ["get_routes", "models"]
+ignore_errors = true
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
