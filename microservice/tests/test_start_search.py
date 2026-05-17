@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def mock_run_search():
-    with patch("app.routes.run_search", AsyncMock()) as m:
+    with patch("app.routers.run_search", AsyncMock()) as m:
         yield m
 
 

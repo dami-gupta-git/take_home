@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 import app.http_client as http
-from app.routes import _tasks, router
+from app.routers import _tasks, router
 
 
 @asynccontextmanager
