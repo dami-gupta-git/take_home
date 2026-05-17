@@ -21,6 +21,11 @@ _tasks: set[asyncio.Task[None]] = set()
 
 @router.post("/start_search", status_code=202)
 async def start_search(body: SearchRequest) -> Response:
+    """
+    Accept a search request, launch a background task to process it, and return 202 immediately.
+    Results are posted back to the callback URL in batches by the worker.
+    """
+    # Fire-and-forget: return 202 immediately, process in background
     task = asyncio.create_task(run_search(body.smiles, body.callback_url))
     _tasks.add(task)
     task.add_done_callback(_tasks.discard)

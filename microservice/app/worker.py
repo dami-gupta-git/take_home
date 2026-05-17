@@ -13,10 +13,15 @@ logger = logging.getLogger(__name__)
 
 
 async def run_search(smiles: str, callback_url: str) -> None:
+    """
+    Load routes for the given SMILES and post each batch to the callback URL.
+    On error, posts a final callback with is_complete=True and an error_message.
+    """
     settings = get_settings()
     assert http.client is not None
 
     try:
+        # Yield one batch at a time; is_last=True on the final batch
         for batch, is_last in get_routes(smiles, batch_size=settings.BATCH_SIZE):
             payload = {
                 "routes": [
