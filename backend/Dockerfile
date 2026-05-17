@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM deps AS final
 RUN useradd --no-create-home appuser
 COPY . .
+RUN chmod +x entrypoint.sh
 USER appuser
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["./entrypoint.sh"]

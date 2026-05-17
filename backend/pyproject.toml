@@ -10,7 +10,7 @@ select = ["E", "F", "I", "UP"]
 python_version = "3.11"
 strict = true
 ignore_missing_imports = true
-exclude = ["retrosynthesis_search\\.py", "models\\.py", "tests/"]
+exclude = ["retrosynthesis_search\\.py", "models\\.py", "tests/", "alembic/"]
 plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
