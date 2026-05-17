@@ -1,4 +1,4 @@
-.PHONY: install lint lint-fix typecheck test ci up down logs
+.PHONY: install lint lint-fix typecheck test ci up down logs migrate
 
 # Install dev dependencies for both services (see setup.md for venv setup first)
 install:
@@ -27,6 +27,10 @@ test:
 
 # Run full CI pipeline: lint + typecheck + test
 ci: lint typecheck test
+
+# Apply all pending Alembic migrations (requires Postgres running via make up)
+migrate:
+	cd backend && .venv/bin/alembic upgrade head
 
 # Docker Compose targets
 up:

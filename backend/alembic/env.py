@@ -5,14 +5,14 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
 from app.config import get_settings
+from app.models.db import Base
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Populated once models are defined in Stage 2
-target_metadata = None
+target_metadata = Base.metadata
 
 
 def get_url() -> str:
