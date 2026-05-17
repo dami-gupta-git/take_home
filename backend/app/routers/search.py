@@ -3,11 +3,11 @@ Search router — POST /api/search, POST /api/search/{id}/update.
 """
 
 import asyncio
-import logging
 import uuid
 from collections.abc import AsyncGenerator
 from typing import cast
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert
@@ -22,7 +22,7 @@ from retrosynthesis_search import RouteData, create_search_request, update_searc
 
 router = APIRouter(prefix="/api")
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
@@ -50,6 +50,9 @@ async def create_search(
 
     settings = get_settings()
     callback_url = f"{settings.BACKEND_URL}/api/search/{data['id']}/update"
+
+    smiles_log = body.smiles if settings.LOG_LEVEL.upper() == "DEBUG" else "<redacted>"
+    logger.info("search_created", search_id=str(data["id"]), smiles=smiles_log)
 
     asyncio.create_task(_notify_microservice(body.smiles, callback_url))
 
@@ -122,4 +125,4 @@ async def _notify_microservice(smiles: str, callback_url: str) -> None:
             json={"smiles": smiles, "callback_url": callback_url},
         )
     except Exception:
-        logger.exception("Failed to notify microservice")
+        logger.exception("microservice_notify_failed")

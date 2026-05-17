@@ -3,8 +3,8 @@ Microservice routes — POST /start_search.
 """
 
 import asyncio
-import logging
 
+import structlog
 from fastapi import APIRouter
 from starlette.responses import Response
 
@@ -13,7 +13,7 @@ from models import SearchRequest
 
 router = APIRouter()
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 # Tracks running background tasks to allow graceful shutdown
 _tasks: set[asyncio.Task[None]] = set()

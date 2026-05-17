@@ -9,11 +9,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 import app.http_client as http
+from app.config import get_settings
+from app.logging import configure_logging
+from app.middleware import RequestIDMiddleware
 from app.routers import _tasks, router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    configure_logging(get_settings().LOG_LEVEL)
     http.client = http.make_client()
     yield
     # Cancel and await all running background tasks on shutdown
@@ -25,6 +29,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(RequestIDMiddleware)
 app.include_router(router)
 
 

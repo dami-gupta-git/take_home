@@ -10,11 +10,15 @@ from sqlalchemy import text
 
 import app.database as db
 import app.http_client as http
+from app.config import get_settings
+from app.logging import configure_logging
+from app.middleware import RequestIDMiddleware
 from app.routers.search import router as search_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    configure_logging(get_settings().LOG_LEVEL)
     db.AsyncSessionLocal = db.make_session_factory()
     http.client = http.make_client()
     yield
@@ -22,6 +26,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(RequestIDMiddleware)
 app.include_router(search_router)
 
 
