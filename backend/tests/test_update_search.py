@@ -93,6 +93,7 @@ async def test_update_search_is_complete_sets_status(client, db_mock):
         side_effect=[
             MagicMock(scalar_one_or_none=MagicMock(return_value=_make_search_mock())),
             MagicMock(),  # update Search
+            MagicMock(scalars=MagicMock(return_value=MagicMock(all=MagicMock(return_value=[])))),  # count routes
         ]
     )
 
@@ -113,6 +114,7 @@ async def test_update_search_error_message(client, db_mock):
         side_effect=[
             MagicMock(scalar_one_or_none=MagicMock(return_value=_make_search_mock())),
             MagicMock(),  # update Search
+            MagicMock(scalars=MagicMock(return_value=MagicMock(all=MagicMock(return_value=[])))),  # count routes
         ]
     )
 
