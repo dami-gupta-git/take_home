@@ -4,6 +4,7 @@ SQLAlchemy ORM models for the searches and routes tables.
 
 import uuid
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import (
     DateTime,
@@ -52,8 +53,8 @@ class Route(Base):
     batch_index: Mapped[int] = mapped_column(Integer, nullable=False)
     route_index: Mapped[int] = mapped_column(Integer, nullable=False)
     score: Mapped[float] = mapped_column(Float, nullable=False)
-    molecules: Mapped[dict] = mapped_column(JSONB, nullable=False)
-    reactions: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    molecules: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    reactions: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
 
     search: Mapped["Search"] = relationship("Search", back_populates="routes")
 
