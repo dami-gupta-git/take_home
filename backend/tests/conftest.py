@@ -9,6 +9,13 @@ os.environ.setdefault("MICROSERVICE_URL", "http://localhost:8001")
 os.environ.setdefault("BACKEND_URL", "http://localhost:8000")
 
 
+@pytest.fixture(autouse=True)
+def clear_dependency_overrides():
+    yield
+    from app.main import app
+    app.dependency_overrides.clear()
+
+
 @pytest.fixture
 def app():
     from app.main import app

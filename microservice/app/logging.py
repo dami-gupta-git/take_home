@@ -49,5 +49,5 @@ def configure_logging(log_level: str) -> None:
     handler.setFormatter(formatter)
 
     root = logging.getLogger()
-    root.handlers = [handler]
+    root.addHandler(handler)
     root.setLevel(level)

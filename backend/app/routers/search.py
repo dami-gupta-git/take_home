@@ -44,6 +44,14 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
+async def _get_search_or_404(session: AsyncSession, search_id: uuid.UUID) -> Search:
+    result = await session.execute(select(Search).where(Search.id == search_id))
+    search = result.scalar_one_or_none()
+    if search is None:
+        raise HTTPException(status_code=404, detail="Search not found")
+    return search
+
+
 @router.post("/search", response_model=SearchCreateResponse, status_code=201)
 async def create_search(
     body: SearchCreateRequest,
@@ -74,7 +82,7 @@ async def create_search(
 
 @router.post("/search/{search_id}/update", response_model=UpdateResponse)
 async def update_search(
-    search_id: str,
+    search_id: uuid.UUID,
     body: SearchUpdate,
     session: AsyncSession = Depends(get_db),
 ) -> UpdateResponse:
@@ -82,19 +90,15 @@ async def update_search(
     Receive a batch of routes from the microservice.
     Inserts routes idempotently and updates the search status.
     """
-    sid = uuid.UUID(search_id)
-    result = await session.execute(select(Search).where(Search.id == sid))
-    search = result.scalar_one_or_none()
-    if search is None:
-        raise HTTPException(status_code=404, detail="Search not found")
+    search = await _get_search_or_404(session, search_id)
 
     if body.routes:
-        batch_index = await _next_batch_index(session, sid)
+        batch_index = await _next_batch_index(session, search_id)
         for route_index, route in enumerate(body.routes):
             stmt = (
                 insert(Route)
                 .values(
-                    search_id=sid,
+                    search_id=search_id,
                     batch_index=batch_index,
                     route_index=route_index,
                     score=route.score,
@@ -111,7 +115,7 @@ async def update_search(
         is_complete=body.is_complete,
         error_message=body.error_message,
     )
-    await session.execute(update(Search).where(Search.id == sid).values(**update_data))
+    await session.execute(update(Search).where(Search.id == search_id).values(**update_data))
     await session.commit()
 
     return UpdateResponse(status="ok")
@@ -119,14 +123,10 @@ async def update_search(
 
 @router.get("/search/{search_id}/status", response_model=SearchStatusResponse)
 async def get_search_status(
-    search_id: str,
+    search_id: uuid.UUID,
     session: AsyncSession = Depends(get_db),
 ) -> SearchStatusResponse:
-    sid = uuid.UUID(search_id)
-    result = await session.execute(select(Search).where(Search.id == sid))
-    search = result.scalar_one_or_none()
-    if search is None:
-        raise HTTPException(status_code=404, detail="Search not found")
+    search = await _get_search_or_404(session, search_id)
     return SearchStatusResponse(
         id=str(search.id),
         smiles=search.smiles,
@@ -139,29 +139,27 @@ async def get_search_status(
 
 @router.get("/search/{search_id}/results", response_model=SearchResultsResponse)
 async def get_search_results(
-    search_id: str,
+    search_id: uuid.UUID,
     min_score: float | None = None,
     session: AsyncSession = Depends(get_db),
 ) -> SearchResultsResponse:
-    sid = uuid.UUID(search_id)
-    result = await session.execute(select(Search).where(Search.id == sid))
-    if result.scalar_one_or_none() is None:
-        raise HTTPException(status_code=404, detail="Search not found")
+    await _get_search_or_404(session, search_id)
 
-    stmt = select(Route).where(Route.search_id == sid).order_by(Route.score.desc())
+    stmt = select(Route).where(Route.search_id == search_id)
     if min_score is not None:
         stmt = stmt.where(Route.score >= min_score)
+    stmt = stmt.order_by(Route.score.desc())
 
-    routes_result = await session.execute(stmt)
+    result = await session.execute(stmt)
     trees = [
         build_retrosynthesis_tree(
             cast(RouteData, {"score": r.score, "molecules": r.molecules, "reactions": r.reactions})
         )
-        for r in routes_result.scalars().all()
+        for r in result.scalars().all()
     ]
 
     return SearchResultsResponse(
-        search_id=search_id,
+        search_id=str(search_id),
         total_routes=len(trees),
         routes=trees,
     )

@@ -38,7 +38,6 @@ def _make_client(app, session: AsyncMock):
     async def override_get_db():
         yield session
 
-    app.dependency_overrides.clear()
     app.dependency_overrides[get_db] = override_get_db
     return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
 
@@ -53,7 +52,6 @@ async def test_get_status_returns_search(app):
     )
     async with _make_client(app, session) as client:
         response = await client.get(f"/api/search/{SEARCH_ID}/status")
-    app.dependency_overrides.clear()
 
     assert response.status_code == 200
     data = response.json()
@@ -70,7 +68,6 @@ async def test_get_status_unknown_id_returns_404(app):
     )
     async with _make_client(app, session) as client:
         response = await client.get(f"/api/search/{SEARCH_ID}/status")
-    app.dependency_overrides.clear()
 
     assert response.status_code == 404
 
@@ -89,7 +86,6 @@ async def test_get_results_returns_trees(app):
     )
     async with _make_client(app, session) as client:
         response = await client.get(f"/api/search/{SEARCH_ID}/results")
-    app.dependency_overrides.clear()
 
     assert response.status_code == 200
     data = response.json()
@@ -106,7 +102,6 @@ async def test_get_results_unknown_id_returns_404(app):
     )
     async with _make_client(app, session) as client:
         response = await client.get(f"/api/search/{SEARCH_ID}/results")
-    app.dependency_overrides.clear()
 
     assert response.status_code == 404
 
@@ -123,7 +118,6 @@ async def test_get_results_ordered_by_score_desc(app):
     )
     async with _make_client(app, session) as client:
         response = await client.get(f"/api/search/{SEARCH_ID}/results")
-    app.dependency_overrides.clear()
 
     scores = [r["score"] for r in response.json()["routes"]]
     assert scores == [0.5, 0.9, 0.7]
@@ -141,7 +135,6 @@ async def test_get_results_min_score_filter(app):
     )
     async with _make_client(app, session) as client:
         response = await client.get(f"/api/search/{SEARCH_ID}/results?min_score=0.8")
-    app.dependency_overrides.clear()
 
     assert response.status_code == 200
     assert len(response.json()["routes"]) == 1
