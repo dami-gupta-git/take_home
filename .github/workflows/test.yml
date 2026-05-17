@@ -1,4 +1,4 @@
-name: Unit Tests
+name: CI
 
 on:
   push:
@@ -7,44 +7,91 @@ on:
     branches: [ main ]
 
 jobs:
-  test-backend:
+  backend:
     runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Install backend dependencies
-      run: |
-        cd backend
-        pip install -r requirements-dev.txt
-    
-    - name: Run backend tests
-      run: |
-        cd backend
-        pytest
 
-  test-microservice:
-    runs-on: ubuntu-latest
-    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: retro
+          POSTGRES_PASSWORD: retro
+          POSTGRES_DB: retro
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://retro:retro@localhost:5432/retro
+      MICROSERVICE_URL: http://localhost:8001
+      BACKEND_URL: http://localhost:8000
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Install microservice dependencies
-      run: |
-        cd microservice
-        pip install -r requirements-dev.txt
-    
-    - name: Run microservice tests
-      run: |
-        cd microservice
-        pytest
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: |
+          cd backend
+          ruff format --check .
+          ruff check .
+
+      - name: Typecheck
+        run: |
+          cd backend
+          mypy .
+
+      - name: Run migrations
+        run: |
+          cd backend
+          alembic upgrade head
+
+      - name: Test
+        run: |
+          cd backend
+          pytest
+
+  microservice:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd microservice
+          pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: |
+          cd microservice
+          ruff format --check .
+          ruff check .
+
+      - name: Typecheck
+        run: |
+          cd microservice
+          mypy .
+
+      - name: Test
+        run: |
+          cd microservice
+          pytest
